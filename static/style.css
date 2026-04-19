@@ -1,0 +1,197 @@
+/* --- Professional Medical Palette --- */
+:root {
+    --bg-color: #f4f7f9;      /* Clinical light gray/blue */
+    --primary-blue: #2c3e50;  /* Main text color */
+    --accent-blue: #3498db;   /* Action buttons and icons */
+    --white: #ffffff;
+    --border-color: #d1d9e6;
+    --user-msg-bg: #3498db;
+    --bot-msg-bg: #ffffff;
+}
+
+/* --- Base Layout --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', 'Segoe UI', 'Hind Siliguri', Tahoma, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-blue);
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 0 20px;
+}
+
+.chat-wrapper {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* --- Initial Welcome View (Centered) --- */
+.welcome-banner {
+    text-align: center;
+    margin-top: 15vh;
+    transition: opacity 0.3s ease;
+}
+
+.welcome-icon {
+    font-size: 4.5rem;
+    color: var(--accent-blue);
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.welcome-banner h1 {
+    font-weight: 600;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.welcome-banner p {
+    font-size: 1.1rem;
+    color: #5d6d7e;
+}
+
+/* --- Chat Messages Area --- */
+#message-box {
+    margin-top: 30px;
+    margin-bottom: 120px; /* Space for the input box at bottom */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.message-row {
+    display: flex;
+    width: 100%;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.user-row { justify-content: flex-end; }
+.bot-row { justify-content: flex-start; align-items: flex-end; gap: 12px; }
+
+.message {
+    padding: 15px 22px;
+    border-radius: 20px;
+    font-size: 1.15rem; /* Large enough for tablets */
+    line-height: 1.6;    /* Critical for Bengali characters */
+    max-width: 80%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    word-wrap: break-word;
+}
+
+.user-msg {
+    background-color: var(--user-msg-bg);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.bot-msg {
+    background-color: var(--bot-msg-bg);
+    color: var(--primary-blue);
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--border-color);
+    white-space: pre-wrap; /* Preserves line breaks from AI */
+}
+
+.bot-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* --- Dynamic Input Box (The Search Style) --- */
+.input-holder {
+    position: fixed;
+    left: 50%;
+    top: 55%; /* Starting centered position */
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 700px;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 1000;
+}
+
+/* Class added via JS when first message is sent */
+.active-state .input-holder {
+    top: auto;
+    bottom: 30px;
+    transform: translateX(-50%);
+}
+
+.input-pill {
+    background: var(--white);
+    padding: 12px 25px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    border: 1px solid var(--border-color);
+}
+
+#user-msg {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 1.2rem;
+    background: transparent;
+    color: var(--primary-blue);
+}
+
+.icon-btn, .send-btn {
+    background: none;
+    border: none;
+    color: var(--accent-blue);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 10px;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.send-btn:hover {
+    transform: scale(1.1);
+    color: var(--primary-blue);
+}
+
+/* --- Animations & Effects --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ChatGPT Cursor Blink */
+.bot-msg:not(:empty)::after {
+    content: "●";
+    margin-left: 5px;
+    color: var(--accent-blue);
+    animation: blink 0.8s infinite;
+}
+
+@keyframes blink { 
+    0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } 
+}
+
+/* --- Tablet & Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .welcome-banner { margin-top: 10vh; }
+    .welcome-banner h1 { font-size: 1.6rem; }
+    .message { max-width: 90%; font-size: 1rem; }
+    .input-holder { width: 95%; }
+    .input-pill { padding: 8px 15px; }
+}

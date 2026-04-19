@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediBot | Clinical Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="app-container" id="app-container">
+        <main class="chat-wrapper">
+            <div id="chat-content-area">
+                <div class="welcome-banner" id="welcome-banner">
+                    <i class="fas fa-notes-medical welcome-icon"></i>
+                    <h1>How can I help you, Sir?</h1>
+                    <p>Describe symptoms or ask clinical queries in English or Bengali.</p>
+                </div>
+                <div id="message-box"></div>
+            </div>
+
+            <div class="input-holder" id="input-holder">
+                <form id="chat-form">
+                    <div class="input-pill">
+                        <label for="file-upload" class="icon-btn">
+                            <i class="fas fa-paperclip"></i>
+                            <input type="file" id="file-upload" hidden>
+                        </label>
+                        <input type="text" id="user-msg" placeholder="Type symptoms..." autocomplete="off">
+                        <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#chat-form').on('submit', async function(e) {
+                e.preventDefault();
+                const msg = $('#user-msg').val();
+                if (!msg.trim()) return;
+
+                // UI Transition
+                $('#app-container').addClass('active-state');
+                $('#welcome-banner').fadeOut(200);
+
+                // Add User Message
+                $('#message-box').append(`<div class="message-row user-row"><div class="message user-msg">${msg}</div></div>`);
+                $('#user-msg').val('');
+
+                // Create Bot Message Container
+                const botMsgId = "bot-" + Date.now();
+                $('#message-box').append(`
+                    <div class="message-row bot-row">
+                        <div class="bot-avatar"><i class="fas fa-user-md"></i></div>
+                        <div class="message bot-msg" id="${botMsgId}"></div>
+                    </div>`);
+
+                // Streaming Fetch
+                const response = await fetch("/get", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "msg=" + encodeURIComponent(msg)
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                const botDiv = document.getElementById(botMsgId);
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    botDiv.innerText += chunk; // Word-by-word update
+
+                    // Auto-scroll to bottom
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
