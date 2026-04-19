@@ -31,27 +31,35 @@
                         <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </form>
+                
+                <div class="home-footer">
+                    ....developed by_<strong>সব্যসাচী</strong>
+                </div>
             </div>
         </main>
+    </div>
+
+    <div class="main-footer">
+        ....developed by_<strong>সব্যসাচী</strong>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            const messageBox = document.getElementById('message-box');
+
             $('#chat-form').on('submit', async function(e) {
                 e.preventDefault();
                 const msg = $('#user-msg').val();
                 if (!msg.trim()) return;
 
-                // UI Transition
+                // চ্যাট শুরু হলে স্টেট পরিবর্তন
                 $('#app-container').addClass('active-state');
                 $('#welcome-banner').fadeOut(200);
 
-                // Add User Message
                 $('#message-box').append(`<div class="message-row user-row"><div class="message user-msg">${msg}</div></div>`);
                 $('#user-msg').val('');
 
-                // Create Bot Message Container
                 const botMsgId = "bot-" + Date.now();
                 $('#message-box').append(`
                     <div class="message-row bot-row">
@@ -59,7 +67,6 @@
                         <div class="message bot-msg" id="${botMsgId}"></div>
                     </div>`);
 
-                // Streaming Fetch
                 const response = await fetch("/get", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -73,12 +80,11 @@
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    
                     const chunk = decoder.decode(value, { stream: true });
-                    botDiv.innerText += chunk; // Word-by-word update
+                    botDiv.innerText += chunk; 
 
-                    // Auto-scroll to bottom
-                    window.scrollTo(0, document.body.scrollHeight);
+                    // অটো-স্ক্রলিং ফিক্স
+                    messageBox.scrollTop = messageBox.scrollHeight;
                 }
             });
         });
