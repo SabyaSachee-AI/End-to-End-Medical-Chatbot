@@ -1,5 +1,6 @@
 langchain ==0.3.26
 flask==3.1.1
+gunicorn
 sentence-transformers==4.1.0
 pypdf
 python-dotenv==1.1.0
