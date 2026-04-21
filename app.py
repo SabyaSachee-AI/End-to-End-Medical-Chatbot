@@ -65,6 +65,8 @@ def chat():
 
     return Response(generate(), mimetype='text/plain')
 
+# app.py এর একদম শেষে এই অংশটুকু রাখুন
 if __name__ == '__main__':
-    # প্রোডাকশনে debug=False থাকবে
+    # host="0.0.0.0" মাস্ট, নাহলে কন্টেইনারের বাইরে থেকে এক্সেস পাওয়া যাবে না
+    # debug=False মাস্ট, প্রোডাকশনের সিকিউরিটির জন্য
     app.run(host="0.0.0.0", port=8080, debug=False)
